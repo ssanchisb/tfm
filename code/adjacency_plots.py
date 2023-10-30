@@ -8,6 +8,22 @@ import seaborn as sns
 FA_matrices = [pd.read_csv(file, header=None) for file in
                glob.glob(os.path.join('/home/vant/code/tfm1/data/FA', "*.csv"))]
 
+# Initialize variables to keep track of the matrix with the lowest sum and its sum
+lowest_sum_matrix = None
+lowest_sum = float('inf')  # Initialize to positive infinity
+lowest_sum_index = None
+
+# Iterate through the matrices and calculate their sum of weights
+for idx, matrix in enumerate(FA_matrices):
+    current_sum = matrix.values.sum()
+    if current_sum < lowest_sum:
+        lowest_sum = current_sum
+        lowest_sum_matrix = matrix
+        lowest_sum_index = idx
+
+print("Matrix with the highest total sum of weights:")
+print(lowest_sum_matrix)
+print("weakest matrix:", lowest_sum_index)
 
 # extract labels of MS vs. HV:
 MS_labels = pd.read_csv('/home/vant/code/tfm1/data/demographics.csv')
@@ -28,7 +44,7 @@ avg_fa_ms = pd.concat(MS_FA).groupby(level=0).mean()
 avg_fa_hv = pd.concat(HV_FA).groupby(level=0).mean()
 
 # extract a matrix of a single ms patient:
-ms1 = pd.read_csv('/home/vant/code/clonemmri/data/FA/0001.csv', header=None)
+ms1 = pd.read_csv('/home/vant/code/clonemmri/data/FA/0121.csv', header=None)
 
 
 
