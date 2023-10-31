@@ -12,7 +12,7 @@ import sys
 
 def compute_CC_ML(fs, G):
     """
-    Compute the closeness centrality (CC) in tries networks
+    Compute the closeness centrality (CC) in multilayer networks
 
     PARAMETERS
     ----------

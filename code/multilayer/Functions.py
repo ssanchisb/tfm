@@ -57,7 +57,7 @@ def create_distance_graph_from_AM(fs, A):
 
 def compute_A_min(fs, A):
     """
-    Compute the matrix of minimum distances between nodes considering the tries network
+    Compute the matrix of minimum distances between nodes considering the multilayer network
 
     Parameters
     ----------

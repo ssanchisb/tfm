@@ -74,7 +74,7 @@ def create_multilayer(fs, FA, RS, GM, INTERLINK=None, FA_diag=True, FA_exp=False
         FA = preproc_diag(FA)
         fs.info("FA matrix: DIAG=1 selected!")
 
-    ### create tries
+    ### create multilayer
     if INTERLINK=='FA':
         fs.info("Interlink type is FA!")
 

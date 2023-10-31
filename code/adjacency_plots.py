@@ -3,6 +3,7 @@ import glob
 import pandas as pd
 import matplotlib.pyplot as plt
 import seaborn as sns
+import numpy as np
 
 
 FA_matrices = [pd.read_csv(file, header=None) for file in
@@ -28,6 +29,12 @@ print("weakest matrix:", lowest_sum_index)
 # extract labels of MS vs. HV:
 MS_labels = pd.read_csv('/home/vant/code/tfm1/data/demographics.csv')
 labels = MS_labels['mstype'].tolist()
+map_nodes = pd.read_csv('/home/vant/code/tfm1/data/nodes.csv')
+nodes = map_nodes['region_name'].tolist()
+
+print(len(nodes))
+print(nodes)
+
 
 print(len(MS_labels))
 print(len(labels))
@@ -58,18 +65,26 @@ ms1_masked = ms1.where(ms1 >= threshold, 0)
 fig, ax = plt.subplots(1, 2, figsize=(12, 6))  # Create two subplots side by side
 
 # Plot the first heatmap for MS
-sns.heatmap(ms1_masked, cmap='coolwarm', cbar=True, square=False, mask=None, ax=ax[0])
+sns.heatmap(ms1, cmap='coolwarm', cbar=True, square=False, mask=None, ax=ax[0])
 ax[0].xaxis.tick_top()
 ax[0].set_title("MS FA Matrix")
-ax[0].set_xlabel("Columns")
-ax[0].set_ylabel("Rows")
+ax[0].set_xlabel("Nodes")
+ax[0].set_ylabel("Nodes")
+num_labels = len(nodes)
+ax[0].set_xticks(np.arange(num_labels))
+ax[0].set_yticks(np.arange(num_labels))
+#ax[0].set_xticklabels(nodes, rotation=90)
+#ax[0].set_yticklabels(nodes, rotation=0)
 
 # Plot the second heatmap for HV
-sns.heatmap(avg_fa_hv_masked, cmap='coolwarm', cbar=True, square=False, mask=None, ax=ax[1])
+sns.heatmap(avg_fa_hv, cmap='coolwarm', cbar=True, square=False, mask=None, ax=ax[1])
 ax[1].xaxis.tick_top()
 ax[1].set_title("HV FA Matrix")
-ax[1].set_xlabel("Columns")
+ax[1].set_xlabel("Nodes")
 ax[1].set_ylabel("")
+ax[1].set_xticks(np.arange(num_labels))
+ax[1].set_yticks(np.arange(num_labels))
+#ax[1].set_xticklabels(nodes, rotation=90)
+#ax[1].set_yticklabels(nodes)
 
 plt.show()
-
