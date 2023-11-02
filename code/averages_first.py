@@ -31,7 +31,7 @@ avg_fa_ms = pd.concat(MS_FA).groupby(level=0).mean()
 avg_fa_hv = pd.concat(HV_FA).groupby(level=0).mean()
 
 # extract a matrix of a single ms patient:
-ms1 = pd.read_csv('/home/vant/code/tfm1/data/subject_networks_FA_v1/090MSVIS_FA_factor.csv', header=None)
+ms1 = pd.read_csv('/home/vant/code/tfm1/data/subject_networks_FA_v1/003MSVIS_FA_factor.csv', header=None)
 
 
 # create graphs:
@@ -60,15 +60,20 @@ for i in range(num_nodes):
         if weight != 0:
             P1.add_edge(i, j, weight=weight)
 
-print(H)
 print(P1)
+print(H)
 
 # define missing edges (difference between healthy and (avg)patient):
-missing_edges = [(u, v) for u, v in H.edges() if not P1.has_edge(u, v)]
+#missing_edges = [(u, v) for u, v in H.edges() if not P1.has_edge(u, v)]
+missing_edges = [(u, v) for u, v in G.edges() if not H.has_edge(u, v)]
+
 
 # create missing edges graph:
-missing_edges_graph = nx.Graph()
-missing_edges_graph.add_edges_from(missing_edges)
+missing_edges_graph = nx.difference(H, P1)
+extra_edges_graph = nx.difference(P1, H)
+#missing_edges_graph = nx.Graph()
+#missing_edges_graph.add_edges_from(missing_edges)
+print(missing_edges_graph)
 
 # plotting results:
 
@@ -129,6 +134,14 @@ ax3.set_title("Missing connections")
 
 average_weight_P1 = sum(P1_weights) / len(P1_weights)
 average_weight_H = sum(hv_weights) / len(hv_weights)
+average_weight_ms = sum(ms_weights) / len(ms_weights)
 
+ax1.text(0.5, 0, f"Average weight: {average_weight_P1:.2f}\n  {P1.number_of_edges()} edges", size=12, ha='center', transform=ax1.transAxes)
+ax2.text(0.5, 0, f"Average weight: {average_weight_H:.2f}\n  {H.number_of_edges()} edges", size=12, ha='center', transform=ax2.transAxes)
+ax3.text(0.5, 0, f"{missing_edges_graph.number_of_edges()} edges in avg. HV not in patient\n ({extra_edges_graph.number_of_edges()} "
+                 f"edges in patient not in avg. HV)", size=12, ha='center', transform=ax3.transAxes)
+
+print(average_weight_P1)
+print(average_weight_H)
 # nx.draw(G, with_labels=True)
 plt.show()
