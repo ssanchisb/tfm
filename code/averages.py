@@ -12,7 +12,7 @@ FA_matrices = [pd.read_csv(file, header=None) for file in
 # print(avg_all_m)
 
 # extract labels of MS vs. HV:
-MS_labels = pd.read_csv('/home/vant/code/clonemmri/data/demographics.csv')
+#MS_labels = pd.read_csv('/home/vant/code/clonemmri/data/demographics.csv')
 labels = MS_labels['mstype'].tolist()
 
 print(len(MS_labels))

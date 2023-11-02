@@ -29,7 +29,7 @@ print("weakest matrix:", lowest_sum_index)
 # extract labels of MS vs. HV:
 MS_labels = pd.read_csv('/home/vant/code/tfm1/data/demographics.csv')
 labels = MS_labels['mstype'].tolist()
-map_nodes = pd.read_csv('/home/vant/code/tfm1/data/nodes.csv')
+#map_nodes = pd.read_csv('/home/vant/code/tfm1/data/nodes.csv')
 nodes = map_nodes['region_name'].tolist()
 
 print(len(nodes))
