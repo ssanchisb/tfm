@@ -77,25 +77,25 @@ ms1_masked = ms1.where(ms1 >= threshold, 0)
 fig, ax = plt.subplots(1, 2, figsize=(12, 6))  # Create two subplots side by side
 
 # Plot the first heatmap for MS
-sns.heatmap(ms1_normalized, cmap='viridis', cbar=True, square=False, mask=None, ax=ax[0])
+sns.heatmap(ms1_normalized, cmap='RdYlGn', cbar=True, square=False, mask=None, ax=ax[0])
 ax[0].xaxis.tick_top()
 ax[0].set_title("MS FA Matrix")
 ax[0].set_xlabel("Nodes")
 ax[0].set_ylabel("Nodes")
 num_labels = len(nodes)
-ax[0].set_xticks(np.arange(num_labels))
-ax[0].set_yticks(np.arange(num_labels))
+#ax[0].set_xticks(np.arange(num_labels))
+#ax[0].set_yticks(np.arange(num_labels))
 #ax[0].set_xticklabels(nodes, rotation=90)
 #ax[0].set_yticklabels(nodes, rotation=0)
 
 # Plot the second heatmap for HV
-sns.heatmap(avg_fa_hv_normalized, cmap='viridis', cbar=True, square=False, mask=None, ax=ax[1])
+sns.heatmap(avg_fa_hv_normalized, cmap='RdYlGn', cbar=True, square=False, mask=None, ax=ax[1])
 ax[1].xaxis.tick_top()
 ax[1].set_title("HV FA Matrix")
 ax[1].set_xlabel("Nodes")
 ax[1].set_ylabel("")
-ax[1].set_xticks(np.arange(num_labels))
-ax[1].set_yticks(np.arange(num_labels))
+#ax[1].set_xticks(np.arange(num_labels))
+#ax[1].set_yticks(np.arange(num_labels))
 #ax[1].set_xticklabels(nodes, rotation=90)
 #ax[1].set_yticklabels(nodes)
 
