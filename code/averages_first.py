@@ -16,6 +16,7 @@ FA_matrices = [pd.read_csv(file, header=None) for file in
 # extract labels of MS vs. HV:
 demographics_df = pd.read_csv('/home/vant/code/tfm1/data/clinic.csv')
 labels = demographics_df['controls_ms'].tolist()
+edss = demographics_df['edss'].tolist()
 
 #print(len(labels))
 #print(labels.count(0))
@@ -23,12 +24,15 @@ labels = demographics_df['controls_ms'].tolist()
 # use labels to separate into 2 groups:
 MS_FA = [FA_matrices[i] for i, value in enumerate(labels) if value == 1]
 HV_FA = [FA_matrices[i] for i, value in enumerate(labels) if value == 0]
+MS_FA_EDSS5 = [FA_matrices[i] for i, value in enumerate(edss) if value >= 5.0]
 print(len(MS_FA))
 print(len(HV_FA))
+print(len(MS_FA_EDSS5))
 
 # Create average matrices for each of the 2 groups:
 avg_fa_ms = pd.concat(MS_FA).groupby(level=0).mean()
 avg_fa_hv = pd.concat(HV_FA).groupby(level=0).mean()
+avg_fa_ms_edss = pd.concat(MS_FA_EDSS5).groupby(level=0).mean()
 
 # extract a matrix of a single ms patient:
 ms1 = pd.read_csv('/home/vant/code/tfm1/data/subject_networks_FA_v1/003MSVIS_FA_factor.csv', header=None)
@@ -37,6 +41,7 @@ ms1 = pd.read_csv('/home/vant/code/tfm1/data/subject_networks_FA_v1/003MSVIS_FA_
 # create graphs:
 G = nx.Graph()
 H = nx.Graph()
+EDSS = nx.Graph()
 P1 = nx.Graph()
 
 num_nodes = avg_fa_ms.shape[0]
@@ -60,6 +65,13 @@ for i in range(num_nodes):
         if weight != 0:
             P1.add_edge(i, j, weight=weight)
 
+for i in range(num_nodes):
+    for j in range(i + 1, num_nodes):
+        weight = avg_fa_ms_edss.iloc[i, j]
+        if weight != 0:
+            EDSS.add_edge(i, j, weight=weight)
+
+
 print(P1)
 print(H)
 
@@ -69,7 +81,7 @@ missing_edges = [(u, v) for u, v in G.edges() if not H.has_edge(u, v)]
 
 
 # create missing edges graph:
-missing_edges_graph = nx.difference(H, P1)
+missing_edges_graph = nx.difference(H, EDSS)
 extra_edges_graph = nx.difference(P1, H)
 #missing_edges_graph = nx.Graph()
 #missing_edges_graph.add_edges_from(missing_edges)
@@ -108,9 +120,9 @@ ax1.axis("off")
 ax2.axis("off")
 ax3.axis("off")
 # nx.draw_networkx_edges(P1, pos, ax=ax1, width=[w / max_P1_weight * 0.3 for w in P1_weights])
-nx.draw_networkx_edges(P1, pos, ax=ax1, edge_color=edge_colors2)
-nx.draw_networkx_nodes(P1, pos, ax=ax1, node_size=10)
-nx.draw_networkx_labels(P1, pos, ax=ax1)
+nx.draw_networkx_edges(EDSS, pos, ax=ax1, edge_color=edge_colors2)
+nx.draw_networkx_nodes(EDSS, pos, ax=ax1, node_size=10)
+nx.draw_networkx_labels(EDSS, pos, ax=ax1)
 # nx.draw_networkx_edges(H, pos2, ax=ax2, width=[w / max_hv_weight * 0.3 for w in hv_weights])
 nx.draw_networkx_edges(H, pos, ax=ax2, edge_color=edge_colors2)
 nx.draw_networkx_nodes(H, pos, ax=ax2, node_size=10)
@@ -128,7 +140,8 @@ cbar1.set_label("Edge Weight")
 
 
 #ax1.set_title("MS Avg")
-ax1.set_title("MS Single Patient")
+ax1.set_title("MS EDSS>=5")
+#ax1.set_title("MS Single Patient")
 ax2.set_title("HV Avg")
 ax3.set_title("Missing connections")
 
