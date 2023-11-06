@@ -20,6 +20,8 @@ def create_graphs(type='structural', graph1='avgMS'):
     labels = demographics_df['controls_ms'].tolist()
     edss = demographics_df['edss'].tolist()
 
+
+
     #print(len(labels))
     #print(labels.count(0))
 
@@ -131,3 +133,4 @@ def create_graphs(type='structural', graph1='avgMS'):
     print(average_weight_H)
     # nx.draw(G, with_labels=True)
     plt.show()
+

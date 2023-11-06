@@ -25,9 +25,9 @@ edss = demographics_df['edss'].tolist()
 MS_FA = [FA_matrices[i] for i, value in enumerate(labels) if value == 1]
 HV_FA = [FA_matrices[i] for i, value in enumerate(labels) if value == 0]
 MS_FA_EDSS5 = [FA_matrices[i] for i, value in enumerate(edss) if value >= 5.0]
-print(len(MS_FA))
-print(len(HV_FA))
-print(len(MS_FA_EDSS5))
+#print(len(MS_FA))
+#print(len(HV_FA))
+#print(len(MS_FA_EDSS5))
 
 # Create average matrices for each of the 2 groups:
 avg_fa_ms = pd.concat(MS_FA).groupby(level=0).mean()
@@ -37,7 +37,10 @@ avg_fa_ms_edss = pd.concat(MS_FA_EDSS5).groupby(level=0).mean()
 # extract a matrix of a single ms patient:
 ms1 = pd.read_csv('/home/vant/code/tfm1/data/subject_networks_FA_v1/003MSVIS_FA_factor.csv', header=None)
 
+print(len(FA_matrices))
+print(len(labels))
 
+"""
 # create graphs:
 G = nx.Graph()
 H = nx.Graph()
@@ -158,3 +161,5 @@ print(average_weight_P1)
 print(average_weight_H)
 # nx.draw(G, with_labels=True)
 plt.show()
+
+"""
