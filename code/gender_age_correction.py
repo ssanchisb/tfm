@@ -3,7 +3,7 @@ import os.path
 import numpy as np
 from sklearn.linear_model import LinearRegression
 from sklearn.metrics import r2_score, mean_squared_error
-import statsmodels.api as sm
+from scipy.stats import t
 
 patient_info = pd.read_csv('/home/vant/code/tfm1/data/clinic.csv', usecols=['id', 'age', 'sex'])
 
@@ -30,7 +30,7 @@ print(matrix_na_func)
 # from here on I continue with structural matrices only
 
 combined_data_st = patient_info.copy()
-combined_data_st['f_matrix'] = filtered_st_matrices
+combined_data_st['st_matrix'] = filtered_st_matrices
 
 #print(combined_data_st['f_matrix'].iloc[0])
 
@@ -39,7 +39,8 @@ print(combined_data_st.isnull().sum())
 # Check for correct gender encoding:
 print(combined_data_st['sex'].unique())
 
-flattened_matrices = [matrix.to_numpy().flatten() for matrix in combined_data_st['f_matrix']]
+#flattened_matrices = [matrix.to_numpy().flatten() for matrix in combined_data_st['f_matrix']]
+flattened_matrices = [matrix.values[np.triu_indices(76)] for matrix in combined_data_st['st_matrix']]
 flattened_data = pd.DataFrame(flattened_matrices)
 
 # Set up data for linear regression:
@@ -64,9 +65,8 @@ print(f'Coefficient for Age (β1): {coefficients[0]}')
 print(f'Coefficient for Gender (β2): {coefficients[1]}')
 
 
-
-# Assuming you have already trained the linear regression model
-# 'model' is the trained model
+# Extract the coefficients for Gender
+coeff_gender = model.coef_[1]
 
 # Calculate residuals
 Y_pred = model.predict(X)
@@ -79,18 +79,18 @@ dof = n_samples - n_features
 # Calculate the standard error of the residuals
 stderr = np.sqrt(np.sum(residuals ** 2) / dof)
 
-# Calculate the standard error of the coefficients
-coef_stderr = stderr / np.sqrt(np.sum(X ** 2, axis=0))
+# Calculate the standard error of the Gender coefficient
+coef_stderr_gender = stderr / np.sqrt(np.sum(X[:, 1] ** 2))
 
-# Calculate t-values for the coefficients
-t_values = model.coef_ / coef_stderr
+# Calculate the t-value for the Gender coefficient
+t_value_gender = coeff_gender / coef_stderr_gender
 
-# Calculate two-tailed p-values based on the t-values
-from scipy.stats import t
-p_values = 2 * (1 - t.cdf(np.abs(t_values), df=dof))
+# Calculate the two-tailed p-value based on the t-value
+p_value_gender = 2 * (1 - t.cdf(np.abs(t_value_gender), df=dof))
 
-# 'p_values' now contains the p-values for each coefficient
+# 'p_value_gender' now contains the p-value for the coefficient associated with Gender
 
-print("P-values for coefficients:")
-print(p_values)
-print(type(p_values))
+print("P-value for the coefficient associated with Gender:")
+print(p_value_gender)
+
+# p values >0.9 tell us there is no statistical significance to the variability according to gender
