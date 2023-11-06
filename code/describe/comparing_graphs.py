@@ -7,8 +7,8 @@ import matplotlib.cm as cm
 from sklearn.preprocessing import MinMaxScaler
 
 
-def create_graphs(type='structural', graph1='avgMS'):
-    if type == 'structural':
+def create_graphs(type='structural_draft', graph1='avgMS'):
+    if type == 'structural_draft':
         FA_matrices = [pd.read_csv(file, header=None) for file in
                        glob.glob(os.path.join('/home/vant/code/tfm1/data/subject_networks_FA_v1', "*.csv"))]
     else:
