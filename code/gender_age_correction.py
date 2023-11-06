@@ -26,15 +26,15 @@ matrix_na_st = [matrix for matrix in filtered_st_matrices if matrix.isnull().val
 matrix_na_func = [matrix for matrix in filtered_func_matrices if matrix.isnull().values.any()]
 print(matrix_na_st)
 print(matrix_na_func)
+# we find no null values in the matrices
 
 # from here on I continue with structural matrices only
 
 combined_data_st = patient_info.copy()
 combined_data_st['st_matrix'] = filtered_st_matrices
 
-#print(combined_data_st['f_matrix'].iloc[0])
 
-# Check for missing values:
+# Check for missing values including clinical data:
 print(combined_data_st.isnull().sum())
 # Check for correct gender encoding:
 print(combined_data_st['sex'].unique())
@@ -88,7 +88,6 @@ t_value_gender = coeff_gender / coef_stderr_gender
 # Calculate the two-tailed p-value based on the t-value
 p_value_gender = 2 * (1 - t.cdf(np.abs(t_value_gender), df=dof))
 
-# 'p_value_gender' now contains the p-value for the coefficient associated with Gender
 
 print("P-value for the coefficient associated with Gender:")
 print(p_value_gender)

@@ -50,7 +50,7 @@ print(len(patient_info))
 print(len(filtered_st_matrices))
 #print(filtered_st_matrices[0])
 print(len(filtered_func_matrices))
-#print(filtered_func_matrices[0])
+print(filtered_func_matrices[0])
 
 
 
