@@ -44,6 +44,7 @@ print(combined_data_st['sex'].unique())
 flattened_matrices = [matrix.values[np.triu_indices(76)] for matrix in combined_data_st['st_matrix']]
 flattened_data = pd.DataFrame(flattened_matrices)
 
+
 # Set up data for linear regression:
 X = combined_data_st[['age', 'sex']].values
 Y = flattened_data.values
@@ -94,3 +95,4 @@ print("P-value for the coefficient associated with Gender:")
 print(p_value_gender)
 
 # p values >0.9 tell us there is no statistical significance to the variability according to gender
+
