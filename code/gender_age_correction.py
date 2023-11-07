@@ -16,14 +16,15 @@ csv_files_func = [file for file in sorted(os.listdir(path_func))]
 st_matrices = [pd.read_csv(os.path.join(path_st, file), header=None) for file in csv_files_st]
 func_matrices = [pd.read_csv(os.path.join(path_func, file), header=None) for file in csv_files_func]
 
-
+"""
 patient_ids = patient_info['id']
 
 filtered_st_matrices = [st for st, file in zip(st_matrices, csv_files_st) if file.replace('.csv', '') in patient_ids.values]
 filtered_func_matrices = [st for st, file in zip(func_matrices, csv_files_func) if file.replace('.csv', '') in patient_ids.values]
+"""
 
-matrix_na_st = [matrix for matrix in filtered_st_matrices if matrix.isnull().values.any()]
-matrix_na_func = [matrix for matrix in filtered_func_matrices if matrix.isnull().values.any()]
+matrix_na_st = [matrix for matrix in st_matrices if matrix.isnull().values.any()]
+matrix_na_func = [matrix for matrix in func_matrices if matrix.isnull().values.any()]
 print(matrix_na_st)
 print(matrix_na_func)
 # we find no null values in the matrices
@@ -31,7 +32,7 @@ print(matrix_na_func)
 # from here on I continue with structural matrices only
 
 combined_data_st = patient_info.copy()
-combined_data_st['st_matrix'] = filtered_st_matrices
+combined_data_st['st_matrix'] = st_matrices
 
 
 # Check for missing values including clinical data:
