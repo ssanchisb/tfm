@@ -129,3 +129,17 @@ else:
     print("There are no negative values in reshaped_matrices.")
 
 """
+
+
+# Create a directory to store the CSV files
+output_dir = '/home/vant/code/tfm1/data/structural_h'  # Change this to your desired directory
+os.makedirs(output_dir, exist_ok=True)
+
+# Iterate through reshaped_matrices and patient_info to save each matrix with the corresponding 'id' as the filename
+for matrix, patient_id in zip(reshaped_matrices, patient_info['id']):
+    # Define the filename using the 'id' field
+    filename = os.path.join(output_dir, f'{patient_id}.csv')
+
+    # Save the matrix as a CSV file
+    matrix.to_csv(filename, index=False)
+
