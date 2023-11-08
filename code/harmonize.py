@@ -141,5 +141,5 @@ for matrix, patient_id in zip(reshaped_matrices, patient_info['id']):
     filename = os.path.join(output_dir, f'{patient_id}.csv')
 
     # Save the matrix as a CSV file
-    matrix.to_csv(filename, index=False)
+    matrix.to_csv(filename, index=False, header=None)
 
