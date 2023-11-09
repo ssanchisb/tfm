@@ -1,10 +1,11 @@
 import pandas as pd
-import numpy as np
 import os.path
 
 patient_info = pd.read_csv('/home/vant/code/tfm1/data/clinic.csv', usecols=['id', 'age', 'sex'])
 
 # we are normalizing between 0 and 1 the files that have been previously harmonized with neuroCombat
+
+# Obtain matrices from files
 path_st = '/home/vant/code/tfm1/data/structural_h'
 path_func = '/home/vant/code/tfm1/data/functional_h'
 
@@ -21,11 +22,8 @@ global_max_func = max(df.values.max() for df in func_matrices)
 # Normalize each matrix based on the global maximum
 structural_norm = [(df / global_max_st) for df in st_matrices]
 functional_norm = [(df / global_max_st) for df in func_matrices]
-"""
-print(global_max_func)
-print(func_matrices[0])
-print(functional_norm[0])
-"""
+
+# Export to .csv files
 output_dir_st = '/home/vant/code/tfm1/data/structural_norm'
 os.makedirs(output_dir_st, exist_ok=True)
 

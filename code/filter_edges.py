@@ -1,17 +1,13 @@
 import copy
 import os.path
-import networkx as nx
-import glob
 import pandas as pd
-import matplotlib.pyplot as plt
 import numpy as np
-
 
 # extract labels of MS vs. HV:
 demographics_df = pd.read_csv('/home/vant/code/tfm1/data/clinic.csv')
 labels = demographics_df['controls_ms'].tolist()
 
-#obtain matrices from normalized data:
+# obtain matrices from normalized data:
 path_st = '/home/vant/code/tfm1/data/structural_norm'
 path_func = '/home/vant/code/tfm1/data/functional_norm'
 
@@ -21,6 +17,7 @@ csv_files_func = [file for file in sorted(os.listdir(path_func))]
 st_matrices = [pd.read_csv(os.path.join(path_st, file), header=None) for file in csv_files_st]
 func_matrices = [pd.read_csv(os.path.join(path_func, file), header=None) for file in csv_files_func]
 
+# Remove values <0.1 in structural matrices
 threshold_st = []
 
 for matrix in st_matrices:
@@ -28,24 +25,23 @@ for matrix in st_matrices:
     modified_matrix[modified_matrix < 0.1] = 0
     threshold_st.append(modified_matrix)
 
-
-# use labels to separate into 2 groups:
+# use labels to separate structural matrices into 2 groups:
 ms_st = [threshold_st[i] for i, value in enumerate(labels) if value == 1]
 hv_st = [threshold_st[i] for i, value in enumerate(labels) if value == 0]
 
+# Flatten upper triangles for further processing
 flattened_matrices = [matrix.values[np.triu_indices(76)] for matrix in hv_st]
 flattened_data = pd.DataFrame(flattened_matrices)
 concatenated_controls = flattened_data
 
-filtered_hv = concatenated_controls.copy()
 
-#turn to 0 values that are not present in more than 60% of controls:
+# turn to 0 all values that are not present in more than 60% of controls:
+filtered_hv = concatenated_controls.copy()
 for column in filtered_hv:
     if (filtered_hv[column] == 0).mean() > 0.6:
         filtered_hv[column] = 0
 
-
-#reshape the matrices from flattened arrays:
+# reshape the matrices from flattened arrays:
 flattened_hv60 = filtered_hv.values
 
 num_matrices = len(flattened_hv60)
@@ -68,26 +64,22 @@ for i in range(num_matrices):
     matrix_df = pd.DataFrame(matrix_data)
     unflattened_hv60.append(matrix_df)
 
-print(len(unflattened_hv60))
-
+# Find the indices where all hv control matrices have 0 values
 avg_hv60 = pd.concat(unflattened_hv60).groupby(level=0).mean()
-
-
-print(len(st_matrices))
 
 zero_positions = avg_hv60 == 0
 
-structural_threshold= copy.deepcopy(st_matrices)
-functional_threshold= copy.deepcopy(func_matrices)
+# Create new matrices where mask with 0 values on the same
+# indices where more than 60% of hv had no edge weight
+structural_threshold = copy.deepcopy(st_matrices)
+functional_threshold = copy.deepcopy(func_matrices)
 
 for matrix in structural_threshold:
     matrix[zero_positions] = 0
 for matrix in functional_threshold:
     matrix[zero_positions] = 0
 
-
-#still have to export csv files
-
+# Export the masked matrices as .csv files
 output_dir_st = '/home/vant/code/tfm1/data/structural_ready'
 os.makedirs(output_dir_st, exist_ok=True)
 

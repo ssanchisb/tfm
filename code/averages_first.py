@@ -8,7 +8,7 @@ from sklearn.preprocessing import MinMaxScaler
 
 
 FA_matrices = [pd.read_csv(file, header=None) for file in
-               glob.glob(os.path.join('/home/vant/code/tfm1/data/subject_networks_FA_v1', "*.csv"))]
+               glob.glob(os.path.join('/home/vant/code/tfm1/data/structural_ready', "*.csv"))]
 
 # print(len(FA_matrices))
 # print(avg_all_m)
@@ -40,7 +40,7 @@ ms1 = pd.read_csv('/home/vant/code/tfm1/data/subject_networks_FA_v1/003MSVIS_FA_
 print(len(FA_matrices))
 print(len(labels))
 
-"""
+
 # create graphs:
 G = nx.Graph()
 H = nx.Graph()
@@ -84,8 +84,8 @@ missing_edges = [(u, v) for u, v in G.edges() if not H.has_edge(u, v)]
 
 
 # create missing edges graph:
-missing_edges_graph = nx.difference(H, EDSS)
-extra_edges_graph = nx.difference(P1, H)
+missing_edges_graph = nx.difference(H, G)
+extra_edges_graph = nx.difference(G, H)
 #missing_edges_graph = nx.Graph()
 #missing_edges_graph.add_edges_from(missing_edges)
 print(missing_edges_graph)
@@ -123,9 +123,9 @@ ax1.axis("off")
 ax2.axis("off")
 ax3.axis("off")
 # nx.draw_networkx_edges(P1, pos, ax=ax1, width=[w / max_P1_weight * 0.3 for w in P1_weights])
-nx.draw_networkx_edges(EDSS, pos, ax=ax1, edge_color=edge_colors2)
-nx.draw_networkx_nodes(EDSS, pos, ax=ax1, node_size=10)
-nx.draw_networkx_labels(EDSS, pos, ax=ax1)
+nx.draw_networkx_edges(G, pos, ax=ax1, edge_color=edge_colors2)
+nx.draw_networkx_nodes(G, pos, ax=ax1, node_size=10)
+nx.draw_networkx_labels(G, pos, ax=ax1)
 # nx.draw_networkx_edges(H, pos2, ax=ax2, width=[w / max_hv_weight * 0.3 for w in hv_weights])
 nx.draw_networkx_edges(H, pos, ax=ax2, edge_color=edge_colors2)
 nx.draw_networkx_nodes(H, pos, ax=ax2, node_size=10)
@@ -142,8 +142,8 @@ cbar1 = plt.colorbar(sm_H, cax=cbar_ax1)
 cbar1.set_label("Edge Weight")
 
 
-#ax1.set_title("MS Avg")
-ax1.set_title("MS EDSS>=5")
+ax1.set_title("MS Avg")
+#ax1.set_title("MS EDSS>=5")
 #ax1.set_title("MS Single Patient")
 ax2.set_title("HV Avg")
 ax3.set_title("Missing connections")
@@ -162,4 +162,3 @@ print(average_weight_H)
 # nx.draw(G, with_labels=True)
 plt.show()
 
-"""

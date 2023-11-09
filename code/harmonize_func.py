@@ -3,7 +3,12 @@ import os.path
 import numpy as np
 from neuroCombat import neuroCombat
 
+# This file is mostly the same as harmonize.py, except
+# we start from diagonals that are all equal to 1 instead of 0,
+# and we also have to deal with negative values indicating functional counter-correlation
+# We will convert diagonals to zero and get rid of negative values before harmonization
 
+# Extract data from folders
 patient_info = pd.read_csv('/home/vant/code/tfm1/data/clinic.csv', usecols=['id', 'age', 'sex'])
 
 path_func = '/home/vant/code/tfm1/data/functional'
@@ -15,8 +20,7 @@ func_matrices = [pd.read_csv(os.path.join(path_func, file), header=None) for fil
 # Functional matrices have weight=1 on all diagonals
 # We convert all diagonal values to zero
 # We also eliminate all negative values (negative correlations)
-np_matrices = [m.values.reshape(76,76) for m in func_matrices]
-
+np_matrices = [m.values.reshape(76, 76) for m in func_matrices]
 zero_matrices = [pd.DataFrame(m.copy()) for m in np_matrices]
 
 for m in zero_matrices:
@@ -25,23 +29,13 @@ for m in zero_matrices:
 
 zero_matrices = [pd.DataFrame(m) for m in zero_matrices]
 
-"""
-print(type(zero_matrices[0]))
-print(len(zero_matrices))
-print(func_matrices[0])
-print(zero_matrices[0])
-
-"""
-
 # from here on, the procedure is exactly the same as with the structural matrices
 
 flattened_matrices = [matrix.values[np.triu_indices(76)] for matrix in zero_matrices]
 flattened_data = pd.DataFrame(flattened_matrices)
 concatenated_patients = flattened_data.T
 
-
-
-batch_vector = [1 if 'MSVIS' in id else 2 for id in patient_info['id']]
+batch_vector = [1 if 'MSVIS' in name else 2 for name in patient_info['id']]
 sex_vector = patient_info['sex'].replace({0: 1, 1: 2}).tolist()
 
 """
@@ -55,13 +49,10 @@ else:
 
 """
 
-
-
 data = concatenated_patients
 
-
 # Specifying the batch (scanner variable) as well as a biological covariate to preserve:
-covars = {'batch':batch_vector}
+covars = {'batch': batch_vector}
 covars = pd.DataFrame(covars)
 
 # To specify names of the variables that are categorical:
@@ -70,13 +61,11 @@ categorical_cols = []
 # To specify the name of the variable that encodes for the scanner/batch covariate:
 batch_col = 'batch'
 
-#Harmonization step:
+# Harmonization step:
 data_combat = neuroCombat(dat=data, covars=covars, batch_col=batch_col, eb=False)["data"]
 
 print(data.shape)
 print(data_combat.shape)
-
-
 
 num_matrices = data_combat.shape[1]
 matrix_size = 76
@@ -106,9 +95,6 @@ for i in range(num_matrices):
     # Append the DataFrame to the list
     reshaped_matrices.append(matrix_df)
 
-# Now, reshaped_matrices is a list of 165 DataFrames representing symmetric matrices with a shape of (76, 76)
-
-
 # Iterate through the matrices in reshaped_matrices and the corresponding matrices in st_matrices
 for i in range(len(reshaped_matrices)):
     # Find the positions where the original_matrix has values equal to 0
@@ -118,12 +104,6 @@ for i in range(len(reshaped_matrices)):
     reshaped_matrices[i].values[zero_positions] = 0
 
 # Now, reshaped_matrices has the values set to 0 only at the same positions where st_matrices have 0
-
-"""
-print(func_matrices[22])
-print(zero_matrices[22])
-print(reshaped_matrices[22])
-"""
 
 output_dir = '/home/vant/code/tfm1/data/functional_h'
 os.makedirs(output_dir, exist_ok=True)
@@ -135,5 +115,3 @@ for matrix, patient_id in zip(reshaped_matrices, patient_info['id']):
 
     # Save the matrix as a CSV file
     matrix.to_csv(filename, index=False, header=None)
-
-
