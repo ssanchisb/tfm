@@ -43,8 +43,7 @@ else:
 """
 
 
-# Getting example data
-# 200 rows (features) and 10 columns (scans)
+
 data = concatenated_patients
 
 
@@ -143,5 +142,5 @@ for matrix, patient_id in zip(reshaped_matrices, patient_info['id']):
     # Save the matrix as a CSV file
     matrix.to_csv(filename, index=False, header=None)
 
-#merging try
+
 
