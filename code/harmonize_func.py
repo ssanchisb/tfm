@@ -129,7 +129,7 @@ print(zero_matrices[22])
 print(reshaped_matrices[22])
 """
 
-output_dir = '/home/vant/code/tfm1/data/functional_h'  # Change this to your desired directory
+output_dir = '/home/vant/code/tfm1/data/functional_h'
 os.makedirs(output_dir, exist_ok=True)
 
 # Iterate through reshaped_matrices and patient_info to save each matrix with the corresponding 'id' as the filename
