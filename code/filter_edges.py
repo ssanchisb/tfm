@@ -72,17 +72,36 @@ print(len(unflattened_hv60))
 
 avg_hv60 = pd.concat(unflattened_hv60).groupby(level=0).mean()
 
-print(st_matrices[0])
 
 print(len(st_matrices))
 
 zero_positions = avg_hv60 == 0
 
 structural_threshold= copy.deepcopy(st_matrices)
+functional_threshold= copy.deepcopy(func_matrices)
 
 for matrix in structural_threshold:
     matrix[zero_positions] = 0
+for matrix in functional_threshold:
+    matrix[zero_positions] = 0
 
-print(structural_threshold[0])
 
-#still have to export csv files and apply transformation to functional matrices
+#still have to export csv files
+
+output_dir_st = '/home/vant/code/tfm1/data/structural_ready'
+os.makedirs(output_dir_st, exist_ok=True)
+
+output_dir_func = '/home/vant/code/tfm1/data/functional_ready'
+os.makedirs(output_dir_func, exist_ok=True)
+
+for matrix, patient_id in zip(structural_threshold, demographics_df['id']):
+    # Define the filename using the 'id' field
+    filename = os.path.join(output_dir_st, f'{patient_id}.csv')
+    # Save the matrix as a CSV file
+    matrix.to_csv(filename, index=False, header=None)
+
+for matrix, patient_id in zip(functional_threshold, demographics_df['id']):
+    # Define the filename using the 'id' field
+    filename = os.path.join(output_dir_func, f'{patient_id}.csv')
+    # Save the matrix as a CSV file
+    matrix.to_csv(filename, index=False, header=None)
