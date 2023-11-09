@@ -1,3 +1,4 @@
+import copy
 import os.path
 import networkx as nx
 import glob
@@ -27,37 +28,24 @@ for matrix in st_matrices:
     modified_matrix[modified_matrix < 0.1] = 0
     threshold_st.append(modified_matrix)
 
-num_zeros_st = sum(np.sum(matrix.values == 0) for matrix in st_matrices)
-num_zeros_thres = sum(np.sum(matrix.values == 0) for matrix in threshold_st)
-
-print(len(st_matrices))
-print(num_zeros_st)
-print(num_zeros_thres)
 
 # use labels to separate into 2 groups:
 ms_st = [threshold_st[i] for i, value in enumerate(labels) if value == 1]
 hv_st = [threshold_st[i] for i, value in enumerate(labels) if value == 0]
 
-
 flattened_matrices = [matrix.values[np.triu_indices(76)] for matrix in hv_st]
 flattened_data = pd.DataFrame(flattened_matrices)
 concatenated_controls = flattened_data
 
-#print(concatenated_controls)
-
 filtered_hv = concatenated_controls.copy()
 
+#turn to 0 values that are not present in more than 60% of controls:
 for column in filtered_hv:
     if (filtered_hv[column] == 0).mean() > 0.6:
         filtered_hv[column] = 0
 
-"""
-num_zeros_hv = (concatenated_controls == 0).sum().sum()
-num_zeros_60 = (filtered_hv == 0).sum().sum()
-print(num_zeros_hv)
-print(num_zeros_60)
-"""
 
+#reshape the matrices from flattened arrays:
 flattened_hv60 = filtered_hv.values
 
 num_matrices = len(flattened_hv60)
@@ -81,4 +69,20 @@ for i in range(num_matrices):
     unflattened_hv60.append(matrix_df)
 
 print(len(unflattened_hv60))
-print(unflattened_hv60[0])
+
+avg_hv60 = pd.concat(unflattened_hv60).groupby(level=0).mean()
+
+print(st_matrices[0])
+
+print(len(st_matrices))
+
+zero_positions = avg_hv60 == 0
+
+structural_threshold= copy.deepcopy(st_matrices)
+
+for matrix in structural_threshold:
+    matrix[zero_positions] = 0
+
+print(structural_threshold[0])
+
+#still have to export csv files and apply transformation to functional matrices
