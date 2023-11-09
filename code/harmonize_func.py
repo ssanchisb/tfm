@@ -15,7 +15,6 @@ func_matrices = [pd.read_csv(os.path.join(path_func, file), header=None) for fil
 # Functional matrices have weight=1 on all diagonals
 # We convert all diagonal values to zero
 # We also eliminate all negative values (negative correlations)
-
 np_matrices = [m.values.reshape(76,76) for m in func_matrices]
 
 zero_matrices = [pd.DataFrame(m.copy()) for m in np_matrices]
@@ -27,14 +26,11 @@ for m in zero_matrices:
 zero_matrices = [pd.DataFrame(m) for m in zero_matrices]
 
 """
->>>>>>> master
 print(type(zero_matrices[0]))
 print(len(zero_matrices))
 print(func_matrices[0])
 print(zero_matrices[0])
 
-<<<<<<< HEAD
-=======
 """
 
 # from here on, the procedure is exactly the same as with the structural matrices
@@ -139,6 +135,5 @@ for matrix, patient_id in zip(reshaped_matrices, patient_info['id']):
 
     # Save the matrix as a CSV file
     matrix.to_csv(filename, index=False, header=None)
-
 
 
