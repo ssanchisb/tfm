@@ -38,7 +38,7 @@ concatenated_controls = flattened_data
 # turn to 0 all values that are not present in more than 60% of controls:
 filtered_hv = concatenated_controls.copy()
 for column in filtered_hv:
-    if (filtered_hv[column] == 0).mean() > 0.6:
+    if (filtered_hv[column] == 0).mean() > 0.4:
         filtered_hv[column] = 0
 
 # reshape the matrices from flattened arrays:
