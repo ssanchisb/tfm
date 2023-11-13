@@ -102,6 +102,8 @@ for i in range(len(reshaped_matrices)):
 
     # Set the corresponding positions in the reshaped_matrix to 0
     reshaped_matrices[i].values[zero_positions] = 0
+    # set remaining negative values to 0
+    reshaped_matrices[i].values[reshaped_matrices[i].values < 0] = 0
 
 # Now, reshaped_matrices has the values set to 0 only at the same positions where st_matrices have 0
 
