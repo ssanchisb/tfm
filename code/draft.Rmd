@@ -1,0 +1,380 @@
+---
+title: "TFM - Estudi demogràfic"
+author: "Salvador Sanchis Beneseit"
+date: '`r format(Sys.Date(),"%B %e, %Y")`'
+output:
+  html_document:
+    toc: yes
+  pdf_document:
+    toc: yes
+editor_options: 
+  markdown: 
+    wrap: 72
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r load_libraries, include=FALSE}
+library(knitr)
+```
+
+------------------------------------------------------------------------
+
+<br>
+
+## 1. Lectura del fitxer i preparació de les dades
+
+<br>
+
+Carreguem l'arxiu:
+
+```{r}
+clinic <- read.csv("clinic.csv", sep=",")
+```
+
+<br>
+
+```{r}
+clinic_ms <- subset(clinic, controls_ms == 1)
+columns_to_keep <- c("id", "age", "sex", "dd", "mstype","edss")
+clinic_data <- clinic_ms[, columns_to_keep]
+```
+
+<br>
+
+```{r}
+summary(clinic_data)
+```
+
+<br>
+
+```{r}
+sapply(clinic_data, class)
+```
+
+<br>
+
+```{r}
+clinic_data$sex[clinic_data$sex == 0] <- "F"
+clinic_data$sex[clinic_data$sex == 1] <- "M"
+clinic_data$sex <- as.factor(clinic_data$sex)
+levels(clinic_data$sex)
+
+```
+
+<br>
+
+```{r}
+clinic_data$mstype[clinic_data$mstype == 0] <- "RRMS"
+clinic_data$mstype[clinic_data$mstype == 1] <- "SPMS"
+clinic_data$mstype[clinic_data$mstype == 2] <- "PPMS"
+clinic_data$mstype <- as.factor(clinic_data$mstype)
+levels(clinic_data$mstype)
+```
+
+<br>
+
+```{r}
+sapply(clinic_data, class)
+```
+
+<br>
+
+## 2. Visual inspection  of data
+
+<br>
+
+```{r}
+boxplot(clinic_data$age)
+```
+
+<br>
+
+```{r}
+library(ggplot2)
+ageplot <- ggplot(clinic_data, aes(age))
+ageplot +geom_histogram(binwidth = 1, colour = 'green', size=0.2)
+```
+
+<br>
+
+```{r}
+ddplot <- ggplot(clinic_data, aes(dd))
+ddplot +geom_histogram(binwidth = 1, colour = 'green', size=0.2)
+```
+
+<br>
+
+```{r}
+edssplot <- ggplot(clinic_data, aes(edss))
+edssplot +geom_histogram(binwidth = 0.5, colour = 'green', size=0.2)
+```
+
+<br>
+
+```{r}
+gender_count <- table(clinic_data$sex)
+barplot(gender_count)
+```
+
+<br>
+
+```{r}
+ms_type_count <- table(clinic_data$mstype)
+barplot(ms_type_count)
+```
+
+<br>
+
+```{r}
+ggplot(clinic_data, aes(x = mstype, fill = sex)) +
+  geom_bar(position = "dodge", stat = "count") +
+  labs(title = "Counts of mstype grouped by Gender", x = "mstype", y = "Count") +
+  scale_fill_manual(values = c("darkolivegreen", "darkmagenta"))  
+```
+
+\
+<br>
+
+```{r}
+plot(clinic_data$dd, clinic_data$edss, 
+     main = "Scatter Plot of Disease Duration vs. EDSS",
+     xlab = "Disease Duration (years)",
+     ylab = "EDSS")
+```
+
+<br>
+
+```{r}
+ggplot(clinic_data, aes(x = dd, y = edss, color = mstype)) +
+  geom_point() +
+  labs(title = "Scatter Plot of Disease Duration vs. EDSS",
+       x = "Disease Duration (years)",
+       y = "EDSS")
+```
+
+<br>
+
+## 3. Statistical measures
+
+<br>
+
+```{r}
+#we define a function to calculate median and iqr
+calculate_summary_stats <- function(data, condition) {
+  vector <- condition
+  result <- list(
+    median = median(vector),
+    q1 = quantile(vector, 0.25),
+    q3 = quantile(vector, 0.75)
+  )
+  formatted_result <- sprintf("%.2f (%.2f - %.2f)", result$median, result$q1, result$q3)
+  
+  return(formatted_result)
+}
+
+```
+
+<br>
+
+### Age
+
+```{r}
+hc_age <- calculate_summary_stats(clinic, clinic$age[clinic$controls_ms == 0])
+rrms_age <- calculate_summary_stats(clinic_data, clinic_data$age[clinic_data$mstype == "RRMS"])
+spms_age <- calculate_summary_stats(clinic_data, clinic_data$age[clinic_data$mstype == "SPMS"])
+ppms_age <- calculate_summary_stats(clinic_data, clinic_data$age[clinic_data$mstype == "PPMS"])
+
+hc_age
+rrms_age
+spms_age
+ppms_age
+```
+
+<br>
+
+```{r}
+hc_age_data <- clinic$age[clinic$controls_ms == 0]
+ms_age_data <- clinic$age[clinic$controls_ms == 1]
+
+wilcoxon_age <- wilcox.test(hc_age_data, ms_age_data)
+formatted_p_value_w <- ifelse(wilcoxon_age$p.value < 0.001, "p < 0.001", sprintf("p = %.3f", wilcoxon_age$p.value))
+wilcoxon_age_p <- c(wilcoxon_age, Formatted_P_Value = formatted_p_value_w)
+wilcoxon_age_p
+```
+
+```{r}
+rrms_age_data <- clinic_data$age[clinic_data$mstype == "RRMS"]
+spms_age_data <- clinic_data$age[clinic_data$mstype == "SPMS"]
+ppms_age_data <- clinic_data$age[clinic_data$mstype == "PPMS"]
+
+# Kruskal-Wallis test
+kruskal_age <- kruskal.test(list(rrms_age_data, spms_age_data, ppms_age_data))
+formatted_p_value <- ifelse(kruskal_age$p.value < 0.001, "p < 0.001", sprintf("p = %.3f", kruskal_age$p.value))
+kruskal_age_p <- c(kruskal_age, Formatted_P_Value = formatted_p_value)
+kruskal_age_p
+```
+
+```{r}
+library(dunn.test)
+
+# Perform Dunn's test for pairwise comparisons
+dunn_age <- dunn.test(list(rrms_age_data, spms_age_data, ppms_age_data), method = "bonferroni")
+# The results show difference between groups, except for comparison between spms and ppms
+dunn_age
+```
+
+<br>
+
+### Disease duration
+
+<br>
+
+```{r}
+rrms_dd <- calculate_summary_stats(clinic_data, clinic_data$dd[clinic_data$mstype == "RRMS"])
+spms_dd <- calculate_summary_stats(clinic_data, clinic_data$dd[clinic_data$mstype == "SPMS"])
+ppms_dd <- calculate_summary_stats(clinic_data, clinic_data$dd[clinic_data$mstype == "PPMS"])
+
+rrms_dd
+spms_dd
+ppms_dd
+```
+
+```{r}
+rrms_dd_data <- clinic_data$dd[clinic_data$mstype == "RRMS"]
+spms_dd_data <- clinic_data$dd[clinic_data$mstype == "SPMS"]
+ppms_dd_data <- clinic_data$dd[clinic_data$mstype == "PPMS"]
+
+# Kruskal-Wallis test
+kruskal_dd <- kruskal.test(list(rrms_dd_data, spms_dd_data, ppms_dd_data))
+formatted_p_value_dd <- ifelse(kruskal_dd$p.value < 0.001, "p < 0.001", sprintf("p = %.3f", kruskal_dd$p.value))
+kruskal_dd_p <- c(kruskal_dd, Formatted_P_Value = formatted_p_value_dd)
+kruskal_dd_p
+
+```
+
+```{r}
+# Perform Dunn's test for pairwise comparisons
+dunn_dd <- dunn.test(list(rrms_dd_data, spms_dd_data, ppms_dd_data), method = "bonferroni")
+# The results show difference between groups, except for comparison between rrms and ppms
+dunn_dd
+```
+
+<br>
+
+### EDSS
+
+<br>
+
+```{r}
+rrms_edss <- calculate_summary_stats(clinic_data, clinic_data$edss[clinic_data$mstype == "RRMS"])
+
+spms_edss <- calculate_summary_stats(clinic_data, clinic_data$edss[clinic_data$mstype == "SPMS"])
+
+ppms_edss <- calculate_summary_stats(clinic_data, clinic_data$edss[clinic_data$mstype == "PPMS"])
+
+spms_edss
+rrms_edss
+ppms_edss
+```
+
+```{r}
+rrms_edss_data <- clinic_data$edss[clinic_data$mstype == "RRMS"]
+spms_edss_data <- clinic_data$edss[clinic_data$mstype == "SPMS"]
+ppms_edss_data <- clinic_data$edss[clinic_data$mstype == "PPMS"]
+
+# Kruskal-Wallis test
+kruskal_edss <- kruskal.test(list(rrms_edss_data, spms_edss_data, ppms_edss_data))
+formatted_p_value_edss <- ifelse(kruskal_edss$p.value < 0.001, "p < 0.001", sprintf("p = %.3f", kruskal_edss$p.value))
+kruskal_edss_p <- c(kruskal_edss, Formatted_P_Value = formatted_p_value_edss)
+kruskal_edss_p
+```
+
+```{r}
+# Perform Dunn's test for pairwise comparisons
+dunn_edss <- dunn.test(list(rrms_edss_data, spms_edss_data, ppms_edss_data), method = "bonferroni")
+# The results show difference between groups, except for comparison between spms and ppms
+dunn_edss
+```
+
+<br>
+
+### Gender
+
+<br>
+
+```{r}
+calculate_gender_stats <- function(data, group_column, gender_column, group_value) {
+  # Subset data for the specified group
+  group_data <- data[data[[group_column]] == group_value, ]
+  
+  # Count of females
+  female_count <- sum(group_data[[gender_column]] == 0 | group_data[[gender_column]] == "F")
+  
+  total_count <- nrow(group_data)
+  # Percentage of females
+  female_percentage <- (female_count / total_count) * 100
+  
+  result <- list(
+    Female_Count = female_count,
+    Female_Percentage = female_percentage
+  )
+  formatted_result <- sprintf("%d (%.f%%)", result$Female_Count, result$Female_Percentage)
+  
+  return(formatted_result)
+}
+```
+
+<br>
+
+```{r}
+female_hv <- calculate_gender_stats(clinic, "controls_ms", "sex", 0)
+female_rrms <- calculate_gender_stats(clinic_data, "mstype", "sex", "RRMS")
+female_spms <- calculate_gender_stats(clinic_data, "mstype", "sex", "SPMS")
+female_ppms <- calculate_gender_stats(clinic_data, "mstype", "sex", "PPMS")
+female_hv
+female_rrms
+female_spms
+female_ppms
+```
+
+<br>
+
+```{r}
+gender_table_controls <- table(clinic$controls_ms == 0, clinic$sex)
+gender_table_controls
+chi_sq_ms <- chisq.test(gender_table_controls)
+chi_sq_ms
+```
+
+<br>
+
+```{r}
+gender_table_phenotypes <- table(clinic_data$mstype, clinic_data$sex)
+gender_table_phenotypes
+chi_sq_types <- chisq.test(gender_table_phenotypes)
+chi_sq_types
+```
+
+<br>
+
+## Summary
+
+<br>
+
+```{r}
+summary_table <- data.frame(HCs=c(hc_age, "-", "-", female_hv),
+                            RRMS=c(rrms_age, rrms_dd, rrms_edss, female_rrms),
+                            SPMS=c(spms_age, spms_dd, spms_edss, female_spms),
+                            PPMS=c(ppms_age, ppms_dd, ppms_edss, female_ppms),
+                            p_value_HC_vs_MS=c(wilcoxon_age_p$Formatted_P_Value, "-", "-", round(chi_sq_ms$p.value, 3)),
+                            p_value_MS_types=c(kruskal_age_p$Formatted_P_Value, kruskal_dd_p$Formatted_P_Value, kruskal_edss_p$Formatted_P_Value, round(chi_sq_types$p.value, 3)),
+                            row.names = c('Age(IQR)', 'Disease duration', 'EDSS', 'Female(%)'))
+
+summary_table
+
+```
+
+<br>\
