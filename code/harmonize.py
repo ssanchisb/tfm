@@ -8,15 +8,11 @@ patient_info = pd.read_csv('/home/vant/code/tfm1/data/clinic.csv', usecols=['id'
 
 # Obtain .csv files and convert to dataframe matrices
 path_st = '/home/vant/code/tfm1/data/structural'
-path_func = '/home/vant/code/tfm1/data/functional'
 
 csv_files_st = [file for file in sorted(os.listdir(path_st))]
-csv_files_func = [file for file in sorted(os.listdir(path_func))]
 
 st_matrices = [pd.read_csv(os.path.join(path_st, file), header=None) for file in csv_files_st]
-func_matrices = [pd.read_csv(os.path.join(path_func, file), header=None) for file in csv_files_func]
 
-# From here on we continue with structural matrices only
 combined_data_st = patient_info.copy()
 combined_data_st['st_matrix'] = st_matrices
 
