@@ -10,8 +10,8 @@ patient_info = pd.read_csv('/home/vant/code/tfm1/data/clinic.csv', usecols=['id'
 path_st = '/home/vant/code/tfm1/data/structural_h'
 path_func = '/home/vant/code/tfm1/data/functional_h'
 
-csv_files_st = [file for file in sorted(os.listdir(path_st))]
-csv_files_func = [file for file in sorted(os.listdir(path_func))]
+csv_files_st = [file for file in sorted(os.listdir(path_st), key=lambda x: x.lower())]
+csv_files_func = [file for file in sorted(os.listdir(path_func), key=lambda x: x.lower())]
 
 st_matrices = [pd.read_csv(os.path.join(path_st, file), header=None) for file in csv_files_st]
 func_matrices = [pd.read_csv(os.path.join(path_func, file), header=None) for file in csv_files_func]
@@ -43,7 +43,7 @@ for df in st_matrices:
 print(outliers_st)
 print(len(outliers_st))
 
-percentile_to_exclude_st = 99.997
+percentile_to_exclude_st = 99.99
 max_value_st = np.percentile(matrix_values_flattened_st, percentile_to_exclude_st)
 print("max structural value: {}".format(max(matrix_values_flattened_st)))
 print("Upper threshold value structural: {}".format(max_value_st))
@@ -65,7 +65,7 @@ matrix_values_flattened_func = np.concatenate([df.values.flatten() for df in fun
 max_func = np.max(matrix_values_flattened_func)
 print("max func: {}".format(max_func))
 
-percentile_to_exclude_func = 99.997
+percentile_to_exclude_func = 99.99
 max_value_func = np.percentile(matrix_values_flattened_func, percentile_to_exclude_func)
 print("Upper threshold value func: {}".format(max_value_func))
 

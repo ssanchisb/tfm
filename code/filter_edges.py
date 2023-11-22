@@ -11,8 +11,8 @@ labels = demographics_df['controls_ms'].tolist()
 path_st = '/home/vant/code/tfm1/data/structural_norm'
 path_func = '/home/vant/code/tfm1/data/functional_norm'
 
-csv_files_st = [file for file in sorted(os.listdir(path_st))]
-csv_files_func = [file for file in sorted(os.listdir(path_func))]
+csv_files_st = [file for file in sorted(os.listdir(path_st), key=lambda x: x.lower())]
+csv_files_func = [file for file in sorted(os.listdir(path_func), key=lambda x: x.lower())]
 
 st_matrices = [pd.read_csv(os.path.join(path_st, file), header=None) for file in csv_files_st]
 func_matrices = [pd.read_csv(os.path.join(path_func, file), header=None) for file in csv_files_func]

@@ -9,7 +9,7 @@ patient_info = pd.read_csv('/home/vant/code/tfm1/data/clinic.csv', usecols=['id'
 # Obtain .csv files and convert to dataframe matrices
 path_st = '/home/vant/code/tfm1/data/structural'
 
-csv_files_st = [file for file in sorted(os.listdir(path_st))]
+csv_files_st = [file for file in sorted(os.listdir(path_st), key=lambda x: x.lower())]
 
 st_matrices = [pd.read_csv(os.path.join(path_st, file), header=None) for file in csv_files_st]
 
