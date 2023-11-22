@@ -13,7 +13,7 @@ patient_info = pd.read_csv('/home/vant/code/tfm1/data/clinic.csv', usecols=['id'
 
 path_func = '/home/vant/code/tfm1/data/functional'
 
-csv_files_func = [file for file in sorted(os.listdir(path_func))]
+csv_files_func = [file for file in sorted(os.listdir(path_func), key=lambda x: x.lower())]
 
 func_matrices = [pd.read_csv(os.path.join(path_func, file), header=None) for file in csv_files_func]
 
