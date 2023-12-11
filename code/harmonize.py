@@ -4,7 +4,7 @@ import numpy as np
 from neuroCombat import neuroCombat
 
 # In this script we will harmonize the structural matrices using ComBat
-# The prupose of harmonization is to remove the unwanted variation in the data
+# The purpose of harmonization is to remove the unwanted variation in the data
 # due to the different scanners used to acquire the data
 # In our case there are two different scanners
 
