@@ -3,6 +3,14 @@ import os.path
 import pandas as pd
 import numpy as np
 
+# This script filters the edges of the structural matrices
+# by removing all values <0.1 and then removing all edges
+# that are not present in more than 60% of the controls.
+# The same edges are removed from the functional matrices.
+# The resulting matrices are saved in the folder 'data/structural_ready'
+# and 'data/functional_ready' respectively.
+
+
 # extract labels of MS vs. HV:
 demographics_df = pd.read_csv('/home/vant/code/tfm1/data/clinic.csv')
 labels = demographics_df['controls_ms'].tolist()
