@@ -5,6 +5,8 @@ from sklearn.linear_model import LinearRegression
 from sklearn.metrics import r2_score, mean_squared_error
 from scipy.stats import t
 
+# In this script we look at whether it's necessary to correct for variability according to gender and age in the data
+
 # Extract gender and sex variables
 patient_info = pd.read_csv('/home/vant/code/tfm1/data/clinic.csv', usecols=['id', 'age', 'sex'])
 
@@ -88,4 +90,4 @@ p_value_gender = 2 * (1 - t.cdf(np.abs(t_value_gender), df=dof))
 print("P-value for the coefficient associated with Gender:")
 print(p_value_gender)
 
-# p values >0.9 tell us there is no statistical significance to the variability according to gender
+# p values >0.9 tell us there is no statistical significance to the variability according to gender or age
