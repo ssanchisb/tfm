@@ -3,8 +3,6 @@ import networkx as nx
 import glob
 import pandas as pd
 import matplotlib.pyplot as plt
-import matplotlib.cm as cm
-from sklearn.preprocessing import MinMaxScaler
 
 
 def create_graphs(type='structural_draft', graph1='avgMS'):
