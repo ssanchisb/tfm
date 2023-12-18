@@ -6,7 +6,7 @@ Within the tools directory are the functions used for the statistical analysis a
 The `notebooks` folder contains the notebooks used for the analysis and the classification task, as well as the 
 preliminary demographic analysis of our sample.
 
-We recommend to red the files in the following order:
+We recommend browsing through the files in the following order:
 
 **Notebooks/demo:**
 - demo.html: This notebook contains the demographic analysis of the sample. It is also available in Rmd format.
@@ -32,6 +32,10 @@ the preprocessing stage is finished.
 contains the code used for the classification task. After the preprocessing stage,
 this notebook showcases the main body of work for this project, and the results obtained in it
 will be the base of our conclusions and discussion.
+
+**Visualizations:** Here we find a few images that will help contextualize the results obtained in the classification task.
+- 'viz.ipynb' and 'viz.html': This notebook contains the code used to generate the visualizations used in the presentation.
+- 'viz.pdf': This file contains the visualizations used in the presentation.
 
 
 

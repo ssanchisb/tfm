@@ -130,27 +130,39 @@ def classify_oversampled(data, connections=False):
                 f"Top {idx + 1} Feature: Importance {feature_importances[top_indices[idx]]:.4f}, Original Matrix Index: {original_idx[0] + 1, original_idx[1] + 1}")
 
 
-def classify_oversampled_skf(data, connections=False):
+def classify_oversampled_skf2(data, connections=False, title=None):
     triuim1 = np.triu_indices_from(st_matrices[0], k=1)
     X = [np.array(matrix)[triuim1] for matrix in data]
 
-    # Convert the list of upper triangles to a 2D array
+    # we convert the list of upper triangles to a 2D array
     X = np.array(X)
     y = np.array(labels)
 
-    # Apply SMOTE for oversampling
+    # we use SMOTE for oversampling
     smote = SMOTE(sampling_strategy='auto', random_state=42)
 
-    # Create variables to store the best results
+    # StratifiedKFold with n_splits=5
+    skf = StratifiedKFold(n_splits=5, shuffle=True, random_state=42)
+
+    best_params = None
+
+    # SVM model
+    clf = SVC()
+
+    # Grid search
+    param_grid = {"C": [0.01, 0.1, 1, 10, 100, 200], "gamma": [0.001, 0.01, 0.1, 1, 10]}
+    grid_search = GridSearchCV(clf, param_grid=param_grid, cv=11)
+    grid_search.fit(X, y)
+
+    # we use the best hyperparameters for k-fold cross-validation
+    best_params = grid_search.best_params_
+
+    # variables to store the best results
     best_accuracy = 0.0
     best_precision = 0.0
     best_recall = 0.0
     best_f1 = 0.0
     best_confusion_matrix = None
-    best_params = None
-
-    # Create StratifiedKFold with n_splits=5
-    skf = StratifiedKFold(n_splits=5, shuffle=True, random_state=42)
 
     progress_bar = tqdm(total=skf.get_n_splits(X, y), desc="Folds", position=0, leave=True)
 
@@ -158,51 +170,38 @@ def classify_oversampled_skf(data, connections=False):
         X_train, X_test = X[train_index], X[test_index]
         y_train, y_test = y[train_index], y[test_index]
 
-        # Apply SMOTE to the training data
+        # we apply SMOTE to the training data
         X_resampled, y_resampled = smote.fit_resample(X_train, y_train)
 
-        # Shuffle the oversampled data
         X_resampled, y_resampled = shuffle(X_resampled, y_resampled, random_state=42)
 
-        # SVM model
-        clf = SVC()
-
-        # Grid search for hyperparameter tuning
-        param_grid = {"C": [0.01, 0.1, 1, 10, 100, 200], "gamma": [0.001, 0.01, 0.1, 1, 10]}
-        grid_search = GridSearchCV(clf, param_grid=param_grid, cv=11)
-        grid_search.fit(X_resampled, y_resampled)
-
-        # Train the model with the best parameters
-        best_clf = SVC(C=grid_search.best_params_['C'], gamma=grid_search.best_params_['gamma'])
+        # we train the model with the best parameters
+        best_clf = SVC(C=best_params['C'], gamma=best_params['gamma'])
         best_clf.fit(X_resampled, y_resampled)
 
-        # Predictions on the test set
+        # Predictions
         preds = best_clf.predict(X_test)
 
-        # Evaluate performance
+        # Evaluation
         accuracy = accuracy_score(y_test, preds)
         precision = precision_score(y_test, preds)
         recall = recall_score(y_test, preds)
         f1 = f1_score(y_test, preds)
         cnf_matrix = confusion_matrix(y_test, preds)
 
-        # Update best results if current results are better
         if accuracy > best_accuracy:
-            best_accuracy = accuracy
-            best_precision = precision
-            best_recall = recall
-            best_f1 = f1
+            best_accuracy = round(accuracy, 2)
+            best_precision = round(precision, 2)
+            best_recall = round(recall, 2)
+            best_f1 = round(f1, 2)
             best_confusion_matrix = cnf_matrix
-            best_params = grid_search.best_params_
 
-        # Update the progress bar
         progress_bar.update(1)
 
-    # Close the progress bar
     progress_bar.close()
 
-    # Print the best results
-    print("Best Results:")
+    # Printing the best results
+    print("Best results {}:".format(title))
     print("Best Accuracy: {:.4f}".format(best_accuracy))
     print("Best Precision: {:.4f}".format(best_precision))
     print("Best Recall: {:.4f}".format(best_recall))
@@ -212,24 +211,21 @@ def classify_oversampled_skf(data, connections=False):
     print("Best Parameters (C and Gamma):", best_params)
 
     if connections:
-
-        # Apply SMOTE to the data
+        # we apply SMOTE to the data
         X_resampled, y_resampled = smote.fit_resample(X, y)
 
-        # Shuffle the oversampled data
         X_resampled, y_resampled = shuffle(X_resampled, y_resampled, random_state=42)
 
-        # Split into train and test sets
         X_train, X_test, y_train, y_test = train_test_split(X_resampled, y_resampled, test_size=0.25, random_state=24)
 
-        # Train the final model with the best hyperparameters
+        # we train the final model with the best hyperparameters
         final_clf = SVC(C=best_params['C'], gamma=best_params['gamma'], kernel='rbf')
         final_clf.fit(X_train, y_train)
 
-        # Predictions on the test set
+        # Predictions
         preds = final_clf.predict(X_test)
 
-        # Evaluate performance
+        # Evaluation
         accuracy = accuracy_score(y_test, preds)
         precision = precision_score(y_test, preds)
         recall = recall_score(y_test, preds)
@@ -240,13 +236,15 @@ def classify_oversampled_skf(data, connections=False):
 
         top_indices = np.argsort(feature_importances)[-7:][::-1]
 
-        # Get the row and column indices for the flattened indices
+        # row and column indices for the flattened indices
         row_indices, col_indices = np.triu_indices(76, k=1)
 
-        # Map the flattened indices to the original matrix indices
+        # we map the flattened indices to the original matrix indices
         top_original_indices = list(zip(row_indices[top_indices], col_indices[top_indices]))
 
-        # Print the result
+        # Printing the result
         for idx, original_idx in enumerate(top_original_indices):
             print(
-                f"Top {idx + 1} Feature: Importance {feature_importances[top_indices[idx]]:.4f}, Original Matrix Index: {original_idx[0] + 1, original_idx[1] + 1}")
+                f"Node connection: {original_idx[0] + 1, original_idx[1] + 1}, Importance: {feature_importances[top_indices[idx]]:.4f}")
+
+    return best_accuracy, best_precision, best_recall, best_f1
