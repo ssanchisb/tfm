@@ -9,7 +9,7 @@ preliminary demographic analysis of our sample.
 We recommend to red the files in the following order:
 
 **Notebooks/demo:**
-- demo.html: This notebook contains the demographic analysis of the sample. It is also available in html format.
+- demo.html: This notebook contains the demographic analysis of the sample. It is also available in Rmd format.
 
 **Code files:**
 These are the scripts used to preprocess the data. They apply different transformations to the data, 
