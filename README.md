@@ -2,7 +2,7 @@
 On this repository we gather the code used in the implementation phase of the TFM project.
 The different files under the `code` folder contain the code used for the preprocessing of the data. The results
 of the preprocessing phase are stored in the `data` folder.
-Within the tools directory are the functions used for the statistical analysis and the classification task.
+Within the `tools` directory are the functions used for the statistical analysis and the classification task.
 Since the classification task is executed on a separate notebook, the functions appear in both the `tools` 
 and the `notebooks` folders.
 The `notebooks` folder contains the notebooks used for the analysis and the classification task, as well as the 
