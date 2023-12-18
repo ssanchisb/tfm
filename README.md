@@ -1,9 +1,10 @@
 # tfm
-On this repository we gather most of the code used in the implementation phase of the TFM project.
+On this repository we gather the code used in the implementation phase of the TFM project.
 The different files under the `code` folder contain the code used for the preprocessing of the data. The results
 of the preprocessing are stored in the `data` folder.
 Within the tools directory are the functions used for the statistical analysis and the classification task.
-The `notebooks` folder contains the notebooks used for the analysis and the classification task.
+The `notebooks` folder contains the notebooks used for the analysis and the classification task, as well as the 
+preliminary demographic analysis of our sample.
 
 **Code files:**
 - 'equalize_folder_lenghts.py': This file contains the code used to equalize the number of files in the different folders. The
