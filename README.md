@@ -1,5 +1,5 @@
 # tfm
-On this repository I gather most of the code used in the implementation phase of the TFM project.
+On this repository we gather most of the code used in the implementation phase of the TFM project.
 The different files under the `code` folder contain the code used for the preprocessing of the data. The results
 of the preprocessing are stored in the `data` folder.
 Within the tools directory are the functions used for the statistical analysis and the classification task.
