@@ -266,6 +266,20 @@ table_anova
 
 <br>
 
+```{r}
+```
+
+```{r}
+
+ggplot(clinic_data_th, aes(x = thal_avg, y = as.numeric(edss), color = mstype)) +
+  geom_point() + geom_smooth(method = 'lm', se=FALSE)
+
+
+
+```
+
+<br>
+
 ## 3. Statistical measures
 
 <br>
