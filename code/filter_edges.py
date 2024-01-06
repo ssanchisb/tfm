@@ -42,12 +42,17 @@ flattened_matrices = [matrix.values[np.triu_indices(76)] for matrix in hv_st]
 flattened_data = pd.DataFrame(flattened_matrices)
 concatenated_controls = flattened_data
 
-
 # turn to 0 all values that are not present in more than 60% of controls:
 filtered_hv = concatenated_controls.copy()
+num_columns_turned_to_zero = 0
 for column in filtered_hv:
     if (filtered_hv[column] == 0).mean() > 0.4:
         filtered_hv[column] = 0
+        num_columns_turned_to_zero += 1
+
+num_columns_non_zero = (filtered_hv != 0).any().sum()
+print(f"Number of nodes turned to zero after 60% filtering: {num_columns_turned_to_zero}")
+print(f"Number of nodes with non-zero values after filtering: {num_columns_non_zero}")
 
 # reshape the matrices from flattened arrays:
 flattened_hv60 = filtered_hv.values
