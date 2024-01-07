@@ -11,8 +11,7 @@ of Multiple Sclerosis Disease</h2>
 <h3>Paper's abstract</h3>
 
 Departing from sets of brain connectivity data obtained from 147 multiple sclerosis (MS)
-patients and 18 healthy volunteer control subjects, we first describe the demographic characteris-
-tics of the sample, and then we implement a pre-processing pipeline in order to, subsequently,
+patients and 18 healthy volunteer control subjects, we first describe the demographic characteristics of the sample, and then we implement a pre-processing pipeline in order to, subsequently,
 determine statistically significant differences between patients and controls in three different
 types of measures: 1) Structural and functional connectivity measures in the form of adjacency
 matrices of 76x76 nodes (76 brain regions), 2) Graph connectivity measures, both global and
