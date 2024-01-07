@@ -1,10 +1,13 @@
 # Data Science Master's degree - Master's Thesis
 
----------------
+***
+
 <h2>From brain disconnection to atrophy: Evaluating multi-modal brain network connectivity and regional 
 grey matter volumes in Machine Learning-based classification tasks
 of Multiple Sclerosis Disease</h2>
----------------
+
+***
+
 <h3>Paper's abstract</h3>
 
 Departing from sets of brain connectivity data obtained from 147 multiple sclerosis (MS)
@@ -29,7 +32,8 @@ image of the various processes involved in the pathophysiogical course of multip
 
 (Full Paper can be found in the `paper` folder of this repository)
 
-------------------------
+***
+
 <h3>Repository Guide</h3>
 
 On this repository we gather the code used in the implementation phase of the project.
